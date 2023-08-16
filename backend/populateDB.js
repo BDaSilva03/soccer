@@ -10,7 +10,7 @@ const db = mysql.createPool({
     database: process.env.DB_NAME
 });
 
-const API_ENDPOINT = 'https://v3.football.api-sports.io/players';
+const API_BASE_URL = 'https://v3.football.api-sports.io';
 const HEADERS = {
     'x-rapidapi-key': process.env.FOOTBALL_DATA_API_KEY
 };
@@ -24,36 +24,33 @@ async function testDbConnection() {
     }
 }
 
-async function fetchPlayers(league = 39, season = 2023, page = 1, allPlayers = []) {
+async function callApi(endpoint, params) {
+    const url = `${API_BASE_URL}/${endpoint}`;
     try {
-        const response = await axios.get(`${API_ENDPOINT}?league=${league}&season=${season}&page=${page}`, { headers: HEADERS });
-        const players = response.data.response;
-
-        console.log(`Fetched ${players.length} players from page ${page}.`);
-
-        allPlayers.push(...players);
-
-        if (response.data.paging.current < response.data.paging.total) {
-            // If the current page is odd, introduce a delay before fetching the next page.
-            if (page % 2 === 1) {
-                return new Promise(resolve => {
-                    setTimeout(async () => {
-                        const playersFromNextPage = await fetchPlayers(league, season, page + 1, allPlayers);
-                        resolve(playersFromNextPage);
-                    }, 1000);
-                });
-            } else {
-                return await fetchPlayers(league, season, page + 1, allPlayers);
-            }
-        } else {
-            return allPlayers;
-        }
+        const response = await axios.get(url, { headers: HEADERS, params: params });
+        return response.data;
     } catch (error) {
-        console.error('Error fetching players:', error);
-        return [];
+        console.error('Error calling API:', error);
+        return null;
     }
 }
 
+async function fetchPlayers(league = 39, season = 2023, page = 1, allPlayers = []) {
+    const playersResponse = await callApi('players', { league: league, season: season, page: page });
+
+    if (playersResponse) {
+        allPlayers.push(...playersResponse.response);
+        
+        if (playersResponse.paging.current < playersResponse.paging.total) {
+            if (page % 2 === 1) {
+                await new Promise(resolve => setTimeout(resolve, 1000)); // Sleep for 1 second
+            }
+            return await fetchPlayers(league, season, page + 1, allPlayers);
+        }
+    }
+
+    return allPlayers;
+}
 
 async function savePlayersToDb(players) {
     for (let playerData of players) {
@@ -70,22 +67,29 @@ async function savePlayersToDb(players) {
             const teamId = teamResults.insertId;
 
             // Insert relation into player_teams table
-            await db.query('INSERT INTO player_teams (player_id, team_id) VALUES (?, ?)', [playerId, teamId]);
+            await db.query('INSERT INTO player_teams (player_id, team_id) VALUES (?, ?) ON DUPLICATE KEY UPDATE player_id=player_id, team_id=team_id', [playerId, teamId]);
         } catch (err) {
             console.error('Error inserting data:', err);
         }
     }
 }
 
-async function populatePlayers() {
-    await testDbConnection(); // Test the DB connection first
+async function populateDb() {
+    await testDbConnection();
+
+    // Fetch and print all the teams (optional)
+    const teams = await callApi('teams', { league: 39, season: 2023 });
+    console.log(teams);
+
+    // Fetch players and save them to the database
     const players = await fetchPlayers();
     await savePlayersToDb(players);
+
     console.log('Players saved successfully.');
     db.end();
 }
 
-populatePlayers().catch(error => {
+populateDb().catch(error => {
     console.error('Error:', error);
     db.end();
 });
