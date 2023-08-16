@@ -29,6 +29,8 @@ async function fetchPlayers(page = 1, allPlayers = []) {
         const response = await axios.get(`${API_ENDPOINT}?league=39&season=2023&page=${page}`, { headers: HEADERS });
         const players = response.data.response;
 
+        console.log(`Fetched ${players.length} players from page ${page}.`);
+
         allPlayers.push(...players);
 
         if (response.data.paging.current < response.data.paging.total) {
@@ -47,16 +49,20 @@ async function savePlayersToDb(players) {
         const player = playerData.player;
         const team = playerData.statistics[0].team;
 
-        // Insert player into players table (if not exists)
-        const [playerResults] = await db.query('INSERT IGNORE INTO players (name) VALUES (?)', [`${player.firstname} ${player.lastname}`]);
-        const playerId = playerResults.insertId;
+        try {
+            // Insert player into players table
+            const [playerResults] = await db.query('INSERT INTO players (name) VALUES (?) ON DUPLICATE KEY UPDATE name=name', [`${player.firstname} ${player.lastname}`]);
+            const playerId = playerResults.insertId;
 
-        // Insert team into teams table (if not exists)
-        const [teamResults] = await db.query('INSERT IGNORE INTO teams (name) VALUES (?)', [team.name]);
-        const teamId = teamResults.insertId;
+            // Insert team into teams table
+            const [teamResults] = await db.query('INSERT INTO teams (name) VALUES (?) ON DUPLICATE KEY UPDATE name=name', [team.name]);
+            const teamId = teamResults.insertId;
 
-        // Insert relation into player_teams table
-        await db.query('INSERT INTO player_teams (player_id, team_id) VALUES (?, ?)', [playerId, teamId]);
+            // Insert relation into player_teams table
+            await db.query('INSERT INTO player_teams (player_id, team_id) VALUES (?, ?)', [playerId, teamId]);
+        } catch (err) {
+            console.error('Error inserting data:', err);
+        }
     }
 }
 
