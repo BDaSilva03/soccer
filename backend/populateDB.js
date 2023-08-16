@@ -24,9 +24,9 @@ async function testDbConnection() {
     }
 }
 
-async function fetchPlayers(page = 1, allPlayers = []) {
+async function fetchPlayers(league = 39, season = 2023, page = 1, allPlayers = []) {
     try {
-        const response = await axios.get(`${API_ENDPOINT}?league=39&season=2023&page=${page}`, { headers: HEADERS });
+        const response = await axios.get(`${API_ENDPOINT}?league=${league}&season=${season}&page=${page}`, { headers: HEADERS });
         const players = response.data.response;
 
         console.log(`Fetched ${players.length} players from page ${page}.`);
@@ -34,7 +34,17 @@ async function fetchPlayers(page = 1, allPlayers = []) {
         allPlayers.push(...players);
 
         if (response.data.paging.current < response.data.paging.total) {
-            return await fetchPlayers(page + 1, allPlayers);
+            // If the current page is odd, introduce a delay before fetching the next page.
+            if (page % 2 === 1) {
+                return new Promise(resolve => {
+                    setTimeout(async () => {
+                        const playersFromNextPage = await fetchPlayers(league, season, page + 1, allPlayers);
+                        resolve(playersFromNextPage);
+                    }, 1000);
+                });
+            } else {
+                return await fetchPlayers(league, season, page + 1, allPlayers);
+            }
         } else {
             return allPlayers;
         }
@@ -43,6 +53,7 @@ async function fetchPlayers(page = 1, allPlayers = []) {
         return [];
     }
 }
+
 
 async function savePlayersToDb(players) {
     for (let playerData of players) {
