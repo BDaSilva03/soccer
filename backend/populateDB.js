@@ -10,6 +10,15 @@ const db = mysql.createPool({
     database: process.env.DB_NAME
 });
 
+//Test db connection
+console.log(process.env.DB_HOST);
+
+db.query('SELECT 1', (error, results) => {
+    if (error) throw error;
+    console.log('Database connection successful:', results);
+});
+
+
 const API_ENDPOINT = 'https://v3.football.api-sports.io/players';
 const HEADERS = {
     'x-rapidapi-key': process.env.FOOTBALL_DATA_API_KEY
