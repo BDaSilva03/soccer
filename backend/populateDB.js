@@ -10,7 +10,7 @@ const db = mysql.createPool({
     database: process.env.DB_NAME
 });
 
-const API_BASE_URL = 'https://v3.football.api-sports.io';
+const API_BASE_URL = 'https://v4.football.api-sports.io';
 const HEADERS = {
     'x-rapidapi-key': process.env.FOOTBALL_DATA_API_KEY
 };
