@@ -10,19 +10,19 @@ const db = mysql.createPool({
     database: process.env.DB_NAME
 });
 
-//Test db connection
-console.log(process.env.DB_HOST);
-
-db.query('SELECT 1', (error, results) => {
-    if (error) throw error;
-    console.log('Database connection successful:', results);
-});
-
-
 const API_ENDPOINT = 'https://v3.football.api-sports.io/players';
 const HEADERS = {
     'x-rapidapi-key': process.env.FOOTBALL_DATA_API_KEY
 };
+
+async function testDbConnection() {
+    try {
+        const [results] = await db.query('SELECT 1');
+        console.log('Database connection successful:', results);
+    } catch (error) {
+        console.error('Database connection error:', error);
+    }
+}
 
 async function fetchPlayers(page = 1, allPlayers = []) {
     try {
@@ -36,7 +36,6 @@ async function fetchPlayers(page = 1, allPlayers = []) {
         } else {
             return allPlayers;
         }
-
     } catch (error) {
         console.error('Error fetching players:', error);
         return [];
@@ -62,6 +61,7 @@ async function savePlayersToDb(players) {
 }
 
 async function populatePlayers() {
+    await testDbConnection(); // Test the DB connection first
     const players = await fetchPlayers();
     await savePlayersToDb(players);
     console.log('Players saved successfully.');
