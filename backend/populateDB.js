@@ -91,8 +91,8 @@ async function populateDb() {
     await testDbConnection();
 
     // Fetch and print all the teams (optional)
-    const teams = await callApi('teams', { league: 39, season: 2023 });
-    console.log(teams);
+    //const teams = await callApi('teams', { league: 39, season: 2023 });
+    //console.log(teams);
 
     // Fetch players and save them to the database
     const players = await fetchPlayers();
