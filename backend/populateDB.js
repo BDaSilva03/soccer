@@ -59,15 +59,28 @@ async function savePlayersToDb(players) {
 
         try {
             // Insert player into players table
-            const [playerResults] = await db.query('INSERT INTO players (name) VALUES (?) ON DUPLICATE KEY UPDATE name=name', [`${player.firstname} ${player.lastname}`]);
-            const playerId = playerResults.insertId;
+            const [playerResults] = await db.query(`
+                INSERT INTO players (id, name, firstname, lastname, age, birth_date, birth_place, birth_country, nationality, height, weight, injured, photo) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+                ON DUPLICATE KEY UPDATE name=VALUES(name), firstname=VALUES(firstname), lastname=VALUES(lastname), age=VALUES(age), 
+                birth_date=VALUES(birth_date), birth_place=VALUES(birth_place), birth_country=VALUES(birth_country), nationality=VALUES(nationality), 
+                height=VALUES(height), weight=VALUES(weight), injured=VALUES(injured), photo=VALUES(photo)
+            `, [
+                player.id, player.name, player.firstname, player.lastname, player.age, player.birth.date, 
+                player.birth.place, player.birth.country, player.nationality, player.height, player.weight, 
+                player.injured, player.photo
+            ]);
 
             // Insert team into teams table
-            const [teamResults] = await db.query('INSERT INTO teams (name) VALUES (?) ON DUPLICATE KEY UPDATE name=name', [team.name]);
-            const teamId = teamResults.insertId;
+            const [teamResults] = await db.query(`
+                INSERT INTO teams (id, name, logo) 
+                VALUES (?, ?, ?) 
+                ON DUPLICATE KEY UPDATE name=VALUES(name), logo=VALUES(logo)
+            `, [team.id, team.name, team.logo]);
 
             // Insert relation into player_teams table
-            await db.query('INSERT INTO player_teams (player_id, team_id) VALUES (?, ?) ON DUPLICATE KEY UPDATE player_id=player_id, team_id=team_id', [playerId, teamId]);
+            await db.query('INSERT INTO player_teams (player_id, team_id) VALUES (?, ?) ON DUPLICATE KEY UPDATE player_id=VALUES(player_id), team_id=VALUES(team_id)', [player.id, team.id]);
+
         } catch (err) {
             console.error('Error inserting data:', err);
         }
