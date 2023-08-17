@@ -43,7 +43,7 @@ async function fetchPlayers(league = 39, season = 2023, page = 1, allPlayers = [
         
         if (playersResponse.paging.current < playersResponse.paging.total) {
             if (page % 2 === 1) {
-                await new Promise(resolve => setTimeout(resolve, 1000)); // Sleep for 1 second
+                await new Promise(resolve => setTimeout(resolve, 60001)); // Sleep for 60.001 second
             }
             return await fetchPlayers(league, season, page + 1, allPlayers);
         }
