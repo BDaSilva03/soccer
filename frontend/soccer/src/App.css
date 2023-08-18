@@ -51,3 +51,16 @@ button {
 button:hover {
   background-color: #45a049;
 }
+
+.correct-guesses {
+  background-color: #333;
+  color: white;
+  padding: 14px 16px;
+  width: 100%;
+  text-align: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;  /* Ensure it stays on top */
+}
