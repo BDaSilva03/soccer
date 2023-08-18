@@ -10,7 +10,7 @@ function GuessPlayer() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(process.env.REACT_APP_BACKEND_URL + '/randomPlayer');
+        const response = await axios.get('/randomPlayer');
         setPlayer(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
