@@ -35,7 +35,7 @@ async function callApi(endpoint, params) {
     }
 }
 
-async function fetchPlayers(league = 39, season = 2023, page = 1, allPlayers = []) {
+async function fetchPlayers(league = 140, season = 2023, page = 1, allPlayers = []) {
     const playersResponse = await callApi('players', { league: league, season: season, page: page });
 
     if (playersResponse) {
