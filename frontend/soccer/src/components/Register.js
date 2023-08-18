@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-function Register() {
+function Register({ onRegistered }) {
     const [formData, setFormData] = useState({
         username: '',
         password: '',
@@ -12,11 +12,22 @@ function Register() {
     const handleRegister = async () => {
         try {
             const response = await axios.post('/register', formData);
-            setMessage(response.data.message);
+            
+            if (response && response.data) {  // Check if response and response.data exist
+                setMessage(response.data.message);
+                onRegistered(); // Call the prop function when registration is successful
+            } else {
+                setMessage('Unexpected server response.');
+            }
         } catch (error) {
-            setMessage(error.response.data.error);
+            if (error.response && error.response.data && error.response.data.error) {
+                setMessage(error.response.data.error);
+            } else {
+                setMessage('Error occurred during registration.');
+            }
         }
     };
+    
 
     return (
         <div>
