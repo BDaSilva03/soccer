@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
+// The Register component provides the UI and logic for registering a new user.
 function Register({ onRegistered }) {
+    // State for form data and any messages to display to the user
     const [formData, setFormData] = useState({
         username: '',
         password: '',
@@ -9,13 +11,14 @@ function Register({ onRegistered }) {
     });
     const [message, setMessage] = useState('');
 
+    // Handle the registration process when the register button is clicked
     const handleRegister = async () => {
         try {
             const response = await axios.post('/register', formData);
             
-            if (response && response.data) {  // Check if response and response.data exist
+            if (response && response.data) {
                 setMessage(response.data.message);
-                onRegistered(); // Call the prop function when registration is successful
+                onRegistered(); // Notify parent component of successful registration
             } else {
                 setMessage('Unexpected server response.');
             }
@@ -27,8 +30,8 @@ function Register({ onRegistered }) {
             }
         }
     };
-    
 
+    // Render the registration form
     return (
         <div>
             <input value={formData.username} onChange={e => setFormData({ ...formData, username: e.target.value })} placeholder="Username" />

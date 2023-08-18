@@ -1,8 +1,13 @@
+// This script populates the database with player data fetched from an external API.
+
+// Load environment variables
 require('dotenv').config();
+
+// Import necessary libraries
 const axios = require('axios');
 const mysql = require('mysql2/promise');
 
-// Database connection
+// Set up the database connection
 const db = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -10,11 +15,13 @@ const db = mysql.createPool({
     database: process.env.DB_NAME
 });
 
+// API configuration
 const API_BASE_URL = 'https://api-football-v1.p.rapidapi.com/v3';
 const HEADERS = {
     'x-rapidapi-key': process.env.FOOTBALL_DATA_API_KEY
 };
 
+// Test the database connection
 async function testDbConnection() {
     try {
         const [results] = await db.query('SELECT 1');
@@ -24,6 +31,7 @@ async function testDbConnection() {
     }
 }
 
+// Function to call the external API
 async function callApi(endpoint, params) {
     const url = `${API_BASE_URL}/${endpoint}`;
     try {
@@ -35,6 +43,7 @@ async function callApi(endpoint, params) {
     }
 }
 
+// Recursive function to fetch players from the API
 async function fetchPlayers(league = 140, season = 2023, page = 1, allPlayers = []) {
     const playersResponse = await callApi('players', { league: league, season: season, page: page });
 
@@ -52,6 +61,7 @@ async function fetchPlayers(league = 140, season = 2023, page = 1, allPlayers = 
     return allPlayers;
 }
 
+// Save the fetched players to the database
 async function savePlayersToDb(players) {
     for (let playerData of players) {
         const player = playerData.player;
@@ -87,12 +97,9 @@ async function savePlayersToDb(players) {
     }
 }
 
+// Main function to populate the database
 async function populateDb() {
     await testDbConnection();
-
-    // Fetch and print all the teams (optional)
-    //const teams = await callApi('teams', { league: 39, season: 2023 });
-    //console.log(teams);
 
     // Fetch players and save them to the database
     const players = await fetchPlayers();
@@ -102,6 +109,7 @@ async function populateDb() {
     db.end();
 }
 
+// Run the main function
 populateDb().catch(error => {
     console.error('Error:', error);
     db.end();

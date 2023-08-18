@@ -3,19 +3,23 @@ import PlayerInfo from './PlayerInfo';
 import { normalizeText } from './NormalizeText';
 import axios from 'axios';
 
+// This component handles the gameplay of "Guess the Player."
 function GuessPlayer() {
-  const [player, setPlayer] = useState(null);
-  const [guess, setGuess] = useState('');
-  const [correct, setCorrect] = useState(false);
-  const [correctGuesses, setCorrectGuesses] = useState(0); // 1. Correct guesses counter
-  const [message, setMessage] = useState('');
-  const [messageColor, setMessageColor] = useState('');
-  const [showPhoto, setShowPhoto] = useState(false);
-  
+  // State variables to manage the game's logic and UI
+  const [player, setPlayer] = useState(null);  // The current player to guess
+  const [guess, setGuess] = useState('');      // The user's current guess
+  const [correct, setCorrect] = useState(false); // Is the current guess correct?
+  const [correctGuesses, setCorrectGuesses] = useState(0); // Counter for consecutive correct guesses
+  const [message, setMessage] = useState('');  // Feedback message for the user
+  const [messageColor, setMessageColor] = useState(''); // Color of the feedback message (red or green)
+  const [showPhoto, setShowPhoto] = useState(false); // Should the player's photo be revealed?
+
+  // When the component mounts, fetch a new player
   useEffect(() => {
     fetchNewPlayer();
   }, []);
 
+  // Fetch a new random player from the server
   const fetchNewPlayer = async () => {
     try {
       const response = await axios.get('/randomPlayer');
@@ -30,6 +34,7 @@ function GuessPlayer() {
     }
   };
 
+  // Handle the guess submission
   const handleGuess = () => {
     if (player) {
       const normalizedGuess = normalizeText(guess);
@@ -50,6 +55,7 @@ function GuessPlayer() {
     }
   };
 
+  // Render the game UI
   return (
     <div>
       <div className="correct-guesses">Correct guesses in a row: {correctGuesses}</div>
