@@ -21,7 +21,9 @@ const pool = mysql.createPool({
     queueLimit: 0
 });
 
-app.use(cors());
+app.use(cors({
+    origin: "http://localhost:3000"
+}));
 
 app.get('/randomPlayer', async (req, res) => {
     try {
