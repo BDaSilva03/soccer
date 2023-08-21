@@ -1,5 +1,8 @@
 docker-compose.yml
 
+k8s/backend.yaml
+k8s/frontend.yaml
+
 # Logs
 logs
 *.log

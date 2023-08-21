@@ -6,6 +6,8 @@ COPY package*.json ./
 
 RUN npm install bcrypt jsonwebtoken express-validator
 
+RUN npm install dotenv
+
 RUN npm install
 
 COPY . .
