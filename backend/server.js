@@ -25,6 +25,20 @@ app.use(cors({
     origin: "http://localhost:3000"
 }));
 
+// Middleware to verify JWT token and authenticate the user
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (token == null) return res.sendStatus(401); // if no token, send forbidden
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+        if (err) return res.sendStatus(403);
+        req.user = user;
+        next(); // pass the execution off to whatever request the client intended
+    });
+}
+
 app.get('/randomPlayer', async (req, res) => {
     try {
         const connection = await pool.getConnection();

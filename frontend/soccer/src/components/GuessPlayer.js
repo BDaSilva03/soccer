@@ -4,12 +4,11 @@ import { normalizeText } from './NormalizeText';
 import axios from 'axios';
 
 // This component handles the gameplay of "Guess the Player."
-function GuessPlayer() {
+function GuessPlayer({ correctGuesses, setCorrectGuesses }) {
   // State variables to manage the game's logic and UI
   const [player, setPlayer] = useState(null);  // The current player to guess
   const [guess, setGuess] = useState('');      // The user's current guess
   const [correct, setCorrect] = useState(false); // Is the current guess correct?
-  const [correctGuesses, setCorrectGuesses] = useState(0); // Counter for consecutive correct guesses
   const [message, setMessage] = useState('');  // Feedback message for the user
   const [messageColor, setMessageColor] = useState(''); // Color of the feedback message (red or green)
   const [showPhoto, setShowPhoto] = useState(false); // Should the player's photo be revealed?
@@ -58,7 +57,7 @@ function GuessPlayer() {
   // Render the game UI
   return (
     <div>
-      <div className="correct-guesses">Correct guesses in a row: {correctGuesses}</div>
+      {/*<div className="correct-guesses">Correct guesses in a row: {correctGuesses}</div>*/}
       {player ? (
         <div>
           <PlayerInfo player={player} />

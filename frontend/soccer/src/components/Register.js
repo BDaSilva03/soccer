@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 // The Register component provides the UI and logic for registering a new user.
 function Register({ onRegistered }) {
+    const navigate = useNavigate(); // Invoke the useNavigate hook to get the navigate function
+
     // State for form data and any messages to display to the user
     const [formData, setFormData] = useState({
         username: '',
@@ -19,6 +22,7 @@ function Register({ onRegistered }) {
             if (response && response.data) {
                 setMessage(response.data.message);
                 onRegistered(); // Notify parent component of successful registration
+                navigate("/login"); // Redirect to login page after successful registration
             } else {
                 setMessage('Unexpected server response.');
             }
@@ -30,6 +34,7 @@ function Register({ onRegistered }) {
             }
         }
     };
+    
 
     // Render the registration form
     return (
