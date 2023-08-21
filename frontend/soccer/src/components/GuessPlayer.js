@@ -33,8 +33,22 @@ function GuessPlayer({ correctGuesses, setCorrectGuesses }) {
     }
   };
 
+  const saveScore = async () => {
+    if (correctGuesses > 0) { // Only save if score is greater than 0
+      try {
+        await axios.post('/saveScore', { score: correctGuesses }, {
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('token')
+          }
+        });
+      } catch (error) {
+        console.error("Error saving score:", error);
+      }
+    }
+  };
+
   // Handle the guess submission
-  const handleGuess = () => {
+  const handleGuess = async () => {
     if (player) {
       const normalizedGuess = normalizeText(guess);
       const lastNames = player.lastname.split(' ').map(name => normalizeText(name));
@@ -44,8 +58,9 @@ function GuessPlayer({ correctGuesses, setCorrectGuesses }) {
         setCorrect(true);
         setMessage('Correct Guess!');
         setMessageColor('green');
-        setCorrectGuesses(prev => prev + 1); // Increment correct guesses
+        setCorrectGuesses(prev => prev + 1);
       } else {
+        await saveScore(); // Save the score before resetting
         setMessage('Incorrect! Try again.');
         setMessageColor('red');
         setShowPhoto(true);

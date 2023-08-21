@@ -4,6 +4,7 @@ import GuessPlayer from './components/GuessPlayer';
 import Register from './components/Register';
 import Login from './components/Login';
 import Navbar from './components/Navbar';
+import Profile from './components/Profile';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
                     <Route path="/register" element={isAuthenticated ? <Navigate to="/game" /> : <Register onRegistered={() => setIsAuthenticated(true)} />} />
                     <Route path="/game" element={isAuthenticated ? <GuessPlayer setCorrectGuesses={setCorrectGuesses} /> : <Navigate to="/login" />} />
                     <Route path="*" element={<Navigate to="/login" />} />
+                    <Route path="/profile" element={<Profile />} />
                 </Routes>
             </div>
         </Router>

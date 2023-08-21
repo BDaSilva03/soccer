@@ -126,6 +126,37 @@ app.post('/login', async (req, res) => {
     }
 });
 
+app.post('/saveScore', authenticateToken, async (req, res) => {
+    try {
+        const connection = await pool.getConnection();
+        await connection.query('INSERT INTO scores (user_id, score) VALUES (?, ?)', [req.user.id, req.body.score]);
+        connection.release();
+        res.json({ message: 'Score saved successfully' });
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+app.get('/profile', authenticateToken, async (req, res) => {
+    try {
+        const connection = await pool.getConnection();
+        
+        // Fetch recent 5 scores
+        const [recentScores] = await connection.query('SELECT score, date FROM scores WHERE user_id = ? ORDER BY date DESC LIMIT 5', [req.user.id]);
+        
+        // Fetch top 5 scores
+        const [topScores] = await connection.query('SELECT score, date FROM scores WHERE user_id = ? ORDER BY score DESC LIMIT 5', [req.user.id]);
+
+        connection.release();
+
+        res.json({ recentScores, topScores });
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
