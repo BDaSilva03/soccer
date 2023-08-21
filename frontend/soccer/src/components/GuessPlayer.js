@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PlayerInfo from './PlayerInfo';
+import GlobalScores from './GlobalScores';
 import { normalizeText } from './NormalizeText';
 import axios from 'axios';
 
@@ -72,6 +73,9 @@ function GuessPlayer({ correctGuesses, setCorrectGuesses }) {
   // Render the game UI
   return (
     <div>
+      <div>
+      <GlobalScores />
+    </div>
       {/*<div className="correct-guesses">Correct guesses in a row: {correctGuesses}</div>*/}
       {player ? (
         <div>

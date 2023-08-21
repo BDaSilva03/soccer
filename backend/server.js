@@ -157,6 +157,30 @@ app.get('/profile', authenticateToken, async (req, res) => {
     }
 });
 
+app.get('/globalScores', async (req, res) => {
+    try {
+        const connection = await pool.getConnection();
+        
+        const query = `
+            SELECT u.username, s.score, s.date 
+            FROM scores s
+            JOIN users u ON s.user_id = u.id
+            ORDER BY s.score DESC
+            LIMIT 5;
+        `;
+
+        const [results] = await connection.query(query);
+        
+        connection.release();
+
+        res.json(results);
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
