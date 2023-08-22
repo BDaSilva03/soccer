@@ -97,9 +97,6 @@ function GuessPlayer({ correctGuesses, setCorrectGuesses }) {
   // Render the game UI
   return (
     <div className="game-container d-flex">
-      <div className="global-scores-container mr-4">
-        <GlobalScores />
-      </div>
       <div className="player-info-container">
         {player ? (
           <div className="d-flex flex-column align-items-center"> {/* Wrap everything in this div */}
@@ -112,9 +109,9 @@ function GuessPlayer({ correctGuesses, setCorrectGuesses }) {
                     placeholder="Guess the player's name"
                 />
                 <div className="d-flex align-items-center mb-2 justify-content-center"> {/* Flex container for buttons */}
-                  {!correct && <button className="btn btn-primary mr-2" onClick={handleGuess}>Submit</button>}
+                  {!correct && <button className="btn btn-primary mr-2" id="SubmitGame" onClick={handleGuess}>Submit</button>}
                   {correct && <button className="btn btn-success mr-2" onClick={fetchNewPlayer}>Start New Game</button>}
-                  {!correct && <button className="btn btn-secondary" onClick={generateHint}>Give me a hint</button>}
+                  {!correct && <button className="btn btn-secondary" onClick={generateHint}>Hint</button>}
                 </div>
             <p>{hintMessage}</p>
             <p style={{ color: messageColor }}>{message}</p>
@@ -123,6 +120,9 @@ function GuessPlayer({ correctGuesses, setCorrectGuesses }) {
         ) : (
           <p>Loading...</p>
         )}
+      </div>
+      <div className="global-scores-container mr-4">
+        <GlobalScores />
       </div>
     </div>
   );
