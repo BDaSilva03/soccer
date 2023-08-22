@@ -19,8 +19,9 @@ function GlobalScores(){
     }, []);
 
     return (
-        <div>
+        <div className="global-scores-container">
             <h2>Top 5 Global Scores</h2>
+            <div className="table-wrapper">
             <table className="table table-striped">
                 <thead>
                     <tr>
@@ -39,6 +40,7 @@ function GlobalScores(){
                      )}
                 </tbody>
             </table>
+            </div>
         </div>
     );
     
