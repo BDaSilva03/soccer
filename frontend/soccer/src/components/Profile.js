@@ -24,43 +24,46 @@ function Profile() {
     }, []);
 
     return (
-        <div>
-            
-            <h2>Recent Scores</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Score</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {recentScores.map((score, index) => 
-                        <tr key={index}>
-                            <td>{score.score}</td>
-                            <td>{formatDate(score.date)}</td>
+        <div className="game-container d-flex">
+            <div className="recent-scores-container mr-4">
+                <h2 className="mb-4">Recent Scores</h2>
+                <table className="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Score</th>
+                            <th>Date</th>
                         </tr>
-                     )}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {recentScores.map((score, index) => 
+                            <tr key={index}>
+                                <td>{score.score}</td>
+                                <td>{formatDate(score.date)}</td>
+                            </tr>
+                         )}
+                    </tbody>
+                </table>
+            </div>
             
-            <h2>Top Scores</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Score</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {topScores.map((score, index) => 
-                        <tr key={index}>
-                            <td>{score.score}</td>
-                            <td>{formatDate(score.date)}</td>
+            <div className="top-scores-container">
+                <h2 className="mb-4">Top Scores</h2>
+                <table className="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Score</th>
+                            <th>Date</th>
                         </tr>
-                    )}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {topScores.map((score, index) => 
+                            <tr key={index}>
+                                <td>{score.score}</td>
+                                <td>{formatDate(score.date)}</td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 }

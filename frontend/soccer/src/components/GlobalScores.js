@@ -21,9 +21,10 @@ function GlobalScores(){
     return (
         <div>
             <h2>Top 5 Global Scores</h2>
-            <table>
+            <table className="table table-striped">
                 <thead>
                     <tr>
+                        <th>Username</th>
                         <th>Score</th>
                         <th>Date</th>
                     </tr>
@@ -40,6 +41,7 @@ function GlobalScores(){
             </table>
         </div>
     );
+    
 }
 
 function formatDate(utcString) {

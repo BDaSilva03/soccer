@@ -28,16 +28,19 @@ function Navbar({ correctGuesses, onLogout }) {
     };
 
     return (
-        <div className="correct-guesses">
-            Correct guesses in a row: {correctGuesses}
-            {location.pathname === "/profile" ? (
-                <button onClick={() => navigate("/game")} style={{ marginLeft: '20px' }}>Back to Game</button>
-            ) : (
-                <button onClick={() => navigate("/profile")} style={{ marginLeft: '20px' }}>Profile</button>
-            )}
-            <button onClick={handleLogout} style={{ marginLeft: '20px' }}>Logout</button>
+        <div className="correct-guesses d-flex justify-content-between align-items-center">
+            <span>Correct guesses in a row: {correctGuesses}</span>
+            <div className="ml-auto">
+                {location.pathname === "/profile" ? (
+                    <button onClick={() => navigate("/game")} className="btn btn-primary mr-4" id="Profile">Back to Game</button>
+                ) : (
+                    <button onClick={() => navigate("/profile")} className="btn btn-primary mr-4" id="Profile">Profile</button>
+                )}
+                <button onClick={handleLogout} className="btn btn-danger">Logout</button>
+            </div>
         </div>
     );
+    
 }
 
 export default Navbar;

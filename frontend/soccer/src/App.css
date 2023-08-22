@@ -102,3 +102,15 @@ tr:nth-child(even) {
   border-radius: 8px;
   overflow: hidden;
 }
+
+#Profile {
+  margin-right: 10px;
+}
+
+.player-info-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}

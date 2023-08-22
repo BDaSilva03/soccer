@@ -5,7 +5,7 @@ import Register from './components/Register';
 import Login from './components/Login';
 import Navbar from './components/Navbar';
 import Profile from './components/Profile';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
 
 function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -21,8 +21,8 @@ function App() {
 
     return (
         <Router>
-            <div className="App">
-                <h1>Guess the Soccer Player</h1>
+            <div className="App container mt-4"> 
+                <DynamicTitle isAuthenticated={isAuthenticated} />
                 {isAuthenticated && <Navbar correctGuesses={correctGuesses} onLogout={() => {
                 setIsAuthenticated(false);
                 setCorrectGuesses(0);  // Reset the correctGuesses state when logging out
@@ -37,6 +37,21 @@ function App() {
             </div>
         </Router>
     );
+}
+
+// This component will be responsible for displaying the dynamic title.
+function DynamicTitle({ isAuthenticated }) {
+    const location = useLocation();
+
+    // Determine the header title based on the current route
+    const getTitle = () => {
+        if (location.pathname === "/login") return "Login";
+        if (location.pathname === "/register") return "Register";
+        if (location.pathname.startsWith("/profile")) return "Profile";
+        return "Guess the Soccer Player";
+    };
+
+    return <h1 className="text-center mb-4">{getTitle()}</h1>;
 }
 
 export default App;

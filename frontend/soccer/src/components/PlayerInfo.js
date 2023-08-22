@@ -17,7 +17,7 @@ function PlayerInfo({ player }) {
 
   // Render the player info
   return (
-    <div>
+    <div className="player-info-content">
       <p>Age: {player.age}</p>
       <img src={flagURL} alt={player.nationality} title={player.nationality} />
       <img src={player.team_logo} alt={player.team_name} title={player.team_name} />
