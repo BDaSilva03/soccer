@@ -6,6 +6,8 @@ COPY package*.json ./
 
 RUN npm install axios
 
+RUN npm install bootstrap
+
 RUN npm install react-router-dom
 
 RUN npm install http-proxy-middleware

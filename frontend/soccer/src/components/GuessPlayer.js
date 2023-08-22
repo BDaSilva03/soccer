@@ -13,6 +13,7 @@ function GuessPlayer({ correctGuesses, setCorrectGuesses }) {
   const [message, setMessage] = useState('');  // Feedback message for the user
   const [messageColor, setMessageColor] = useState(''); // Color of the feedback message (red or green)
   const [showPhoto, setShowPhoto] = useState(false); // Should the player's photo be revealed?
+  const [hintMessage, setHintMessage] = useState(''); // Hint message for the user
 
   // When the component mounts, fetch a new player
   useEffect(() => {
@@ -28,7 +29,9 @@ function GuessPlayer({ correctGuesses, setCorrectGuesses }) {
       setCorrect(false);
       setMessage('');
       setShowPhoto(false);
-      console.log(response.data);
+      if (response.data.userId === 1) {
+        console.log(response.data);
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -45,6 +48,27 @@ function GuessPlayer({ correctGuesses, setCorrectGuesses }) {
       } catch (error) {
         console.error("Error saving score:", error);
       }
+    }
+  };
+
+  const generateHint = () => {
+    if (!player) return;
+
+    const hintOptions = [];
+    if (!showPhoto) hintOptions.push('photo');
+    if (player.height) hintOptions.push('height');
+
+    const randomHint = hintOptions[Math.floor(Math.random() * hintOptions.length)];
+    switch (randomHint) {
+        case 'photo':
+            setShowPhoto(true);
+            break;
+        case 'height':
+            setHintMessage(`The player's height is ${player.height}.`);
+            break;
+        default:
+            setHintMessage(`The player's last name starts with "${player.lastname.charAt(0)}".`);
+            break;
     }
   };
 
@@ -72,28 +96,34 @@ function GuessPlayer({ correctGuesses, setCorrectGuesses }) {
 
   // Render the game UI
   return (
-    <div>
-      <div>
-      <GlobalScores />
-    </div>
-      {/*<div className="correct-guesses">Correct guesses in a row: {correctGuesses}</div>*/}
-      {player ? (
-        <div>
-          <PlayerInfo player={player} />
-          <input 
-            type="text" 
-            value={guess} 
-            onChange={(e) => setGuess(e.target.value)}
-            placeholder="Guess the player's name"
-          />
-          {!correct && <button onClick={handleGuess}>Submit</button>}
-          {correct && <button onClick={fetchNewPlayer}>Start New Game</button>}
-          <p style={{ color: messageColor }}>{message}</p>
-          {showPhoto && !correct && <img src={player.photo} alt="Player" />}
-        </div>
-      ) : (
-        <p>Loading...</p>
-      )}
+    <div className="game-container d-flex">
+      <div className="global-scores-container mr-4">
+        <GlobalScores />
+      </div>
+      <div className="player-info-container">
+        {player ? (
+          <div className="d-flex flex-column align-items-center"> {/* Wrap everything in this div */}
+            <PlayerInfo player={player} />
+            <input 
+                    type="text" 
+                    className="form-control mb-2"
+                    value={guess} 
+                    onChange={(e) => setGuess(e.target.value)}
+                    placeholder="Guess the player's name"
+                />
+                <div className="d-flex align-items-center mb-2 justify-content-center"> {/* Flex container for buttons */}
+                  {!correct && <button className="btn btn-primary mr-2" onClick={handleGuess}>Submit</button>}
+                  {correct && <button className="btn btn-success mr-2" onClick={fetchNewPlayer}>Start New Game</button>}
+                  {!correct && <button className="btn btn-secondary" onClick={generateHint}>Give me a hint</button>}
+                </div>
+            <p>{hintMessage}</p>
+            <p style={{ color: messageColor }}>{message}</p>
+            {showPhoto && !correct && <img src={player.photo} alt="Player" />}
+          </div>
+        ) : (
+          <p>Loading...</p>
+        )}
+      </div>
     </div>
   );
 }
